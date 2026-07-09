@@ -28,20 +28,6 @@ const VibeSlider = ({ label, value, setValue, leftText, rightText }: SliderProps
           className="vibe-slider"
           style={{ width: '100%' }}
         />
-        {/* Glow effect behind the thumb based on value */}
-        <div style={{
-          position: 'absolute',
-          top: '12px',
-          left: `calc(${value}% - 8px)`,
-          width: '16px',
-          height: '16px',
-          background: 'var(--color-accent-primary)',
-          borderRadius: '50%',
-          filter: 'blur(8px)',
-          opacity: 0.5,
-          pointerEvents: 'none',
-          transition: 'left 0.1s ease'
-        }} />
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--color-text-secondary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>

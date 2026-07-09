@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, User, Music, Sparkles } from 'lucide-react';
 import TopStats from './TopStats';
+import VibeGenerator from './VibeGenerator';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'stats' | 'generator'>('stats');
@@ -172,10 +173,9 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="glass-panel"
-              style={{ padding: '48px', textAlign: 'center', color: 'var(--color-text-muted)' }}
+              style={{ width: '100%' }}
             >
-              [ Vibe Generator Sliders will go here ]
+              <VibeGenerator />
             </motion.div>
           )}
         </AnimatePresence>
