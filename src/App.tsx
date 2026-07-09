@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ThemeToggle from './components/ThemeToggle';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import Callback from './components/Callback';
 import Footer from './components/Footer';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/callback" element={<Callback />} />
           </Routes>
         </div>
         

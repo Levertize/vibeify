@@ -1,13 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, User, Music, Sparkles, Mic2 } from 'lucide-react';
 import TopStats from './TopStats';
 import VibeGenerator from './VibeGenerator';
 
+const mockLyrics = [
+  "Waiting in a car",
+  "Waiting for a ride in the dark",
+  "The night city grows",
+  "Look at the horizon glow",
+  "(City lights reflecting in your eyes)",
+  "(Synth pop dreams and neon skies)",
+  "We can own the night",
+  "We can make it right",
+  "Just drive...",
+  "And never look back",
+  "Fading into the neon black",
+  "The rhythm takes control",
+  "Electric to the soul"
+];
+
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'stats' | 'generator'>('stats');
   const [showLyrics, setShowLyrics] = useState(false);
   const [lyricsSize, setLyricsSize] = useState<'minimal' | 'standard' | 'karaoke'>('minimal');
+  const [activeLine, setActiveLine] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
+
+  useEffect(() => {
+    if (!showLyrics) return;
+    const interval = setInterval(() => {
+      setActiveLine((prev) => (prev + 1) % mockLyrics.length);
+    }, 3000); // Advances every 3 seconds
+    return () => clearInterval(interval);
+  }, [showLyrics]);
+
+  useEffect(() => {
+    if (showLyrics && lineRefs.current[activeLine]) {
+      lineRefs.current[activeLine]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }, [activeLine, showLyrics]);
 
   return (
     <motion.div 
@@ -136,15 +172,19 @@ export default function Dashboard() {
                 transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
                 style={{ overflow: 'hidden', zIndex: 1 }}
               >
-                <div style={{ 
-                  background: 'var(--color-bg-secondary)', 
-                  borderRadius: '12px', 
-                  padding: '16px',
-                  border: '1px solid var(--color-border-subtle)',
-                  maxHeight: lyricsSize === 'karaoke' ? '500px' : lyricsSize === 'standard' ? '300px' : '150px',
-                  overflowY: 'auto',
-                  transition: 'max-height 0.4s ease'
-                }}>
+                <div 
+                  ref={containerRef}
+                  style={{ 
+                    background: 'var(--color-bg-secondary)', 
+                    borderRadius: '12px', 
+                    padding: '16px',
+                    border: '1px solid var(--color-border-subtle)',
+                    maxHeight: lyricsSize === 'karaoke' ? '500px' : lyricsSize === 'standard' ? '300px' : '150px',
+                    overflowY: 'auto',
+                    transition: 'max-height 0.4s ease',
+                    scrollBehavior: 'smooth'
+                  }}
+                >
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
                     {(['minimal', 'standard', 'karaoke'] as const).map((size) => (
                       <button
@@ -168,40 +208,46 @@ export default function Dashboard() {
                     ))}
                   </div>
 
-                  <p style={{ 
-                    color: 'var(--color-text-muted)', 
-                    fontSize: lyricsSize === 'karaoke' ? '20px' : lyricsSize === 'standard' ? '16px' : '14px', 
-                    lineHeight: lyricsSize === 'karaoke' ? 2.5 : 2, 
-                    textAlign: 'center',
-                    transition: 'all 0.3s ease'
-                  }}>
-                    <span style={{ 
-                      color: 'var(--color-text-primary)', 
-                      fontWeight: 600, 
-                      fontSize: lyricsSize === 'karaoke' ? '24px' : lyricsSize === 'standard' ? '18px' : '16px', 
-                      display: 'block', 
-                      textShadow: '0 0 12px rgba(255,255,255,0.4)',
-                      transition: 'all 0.3s ease'
-                    }}>
-                      Waiting in a car
-                    </span>
-                    Waiting for a ride in the dark
-                    <br />
-                    The night city grows
-                    <br />
-                    Look at the horizon glow
-                    <br />
-                    <br />
-                    (City lights reflecting in your eyes)
-                    <br />
-                    (Synth pop dreams and neon skies)
-                    <br />
-                    We can own the night
-                    <br />
-                    We can make it right
-                    <br />
-                    Just drive...
-                  </p>
+                  <div style={{ padding: '40px 0 100px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {mockLyrics.map((line, idx) => {
+                      const isActive = idx === activeLine;
+                      const isPast = idx < activeLine;
+                      
+                      let baseFontSize = '14px';
+                      let activeFontSize = '16px';
+                      
+                      if (lyricsSize === 'standard') {
+                        baseFontSize = '16px';
+                        activeFontSize = '20px';
+                      } else if (lyricsSize === 'karaoke') {
+                        baseFontSize = '20px';
+                        activeFontSize = '28px';
+                      }
+
+                      return (
+                        <p 
+                          key={idx}
+                          ref={el => lineRefs.current[idx] = el}
+                          style={{
+                            color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+                            fontSize: isActive ? activeFontSize : baseFontSize,
+                            lineHeight: lyricsSize === 'karaoke' ? 2.5 : 2,
+                            textAlign: 'center',
+                            fontWeight: isActive ? 700 : 500,
+                            textShadow: isActive ? '0 0 16px rgba(255,255,255,0.6)' : 'none',
+                            opacity: isActive ? 1 : isPast ? 0.3 : 0.7,
+                            transform: isActive ? 'scale(1.05)' : 'scale(1)',
+                            transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                            margin: 0,
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => setActiveLine(idx)}
+                        >
+                          {line}
+                        </p>
+                      );
+                    })}
+                  </div>
                 </div>
               </motion.div>
             )}

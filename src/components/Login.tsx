@@ -1,12 +1,9 @@
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { loginToSpotify } from '../lib/spotify';
 
 export default function Login() {
-  const navigate = useNavigate();
-
   const handleLogin = () => {
-    // TEMPORARY: Bypass auth for "vibe coding" phase
-    navigate('/dashboard');
+    loginToSpotify();
   };
 
   return (
@@ -70,7 +67,7 @@ export default function Login() {
         </motion.p>
 
         <motion.button
-          onClick={handleLogin}
+          onClick={loginToSpotify}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           whileHover={{ scale: 1.05, boxShadow: '0 0 32px rgba(29, 185, 84, 0.3)' }}
