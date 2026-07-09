@@ -1,4 +1,6 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Flame, X, Receipt } from 'lucide-react';
 
 const topArtists = [
   { id: 1, name: 'Synthwave Dreams', image: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=150&h=150' },
@@ -30,9 +32,60 @@ const itemVariants = {
 };
 
 export default function TopStats() {
+  const [showRoast, setShowRoast] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', textAlign: 'left' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', textAlign: 'left', position: 'relative' }}>
       
+      {/* Top Actions Bar */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
+        <motion.button
+          onClick={() => setShowReceipt(true)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            background: 'var(--color-surface-glass)',
+            color: 'var(--color-text-primary)',
+            border: '1px solid var(--color-border-subtle)',
+            padding: '10px 20px',
+            borderRadius: '999px',
+            fontSize: '14px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <Receipt size={16} />
+          Get Receipt
+        </motion.button>
+
+        <motion.button
+          onClick={() => setShowRoast(true)}
+          whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(255, 69, 58, 0.4)' }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            background: 'linear-gradient(135deg, #ff453a 0%, #ff9f0a 100%)',
+            color: '#fff',
+            border: 'none',
+            padding: '10px 20px',
+            borderRadius: '999px',
+            fontSize: '14px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: '0 4px 12px rgba(255, 69, 58, 0.2)'
+          }}
+        >
+          <Flame size={16} />
+          Roast My Taste
+        </motion.button>
+      </div>
+
       {/* Top Artists Section */}
       <section>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
@@ -122,6 +175,172 @@ export default function TopStats() {
           ))}
         </motion.div>
       </section>
+
+      {/* AI Roast Modal */}
+      <AnimatePresence>
+        {showRoast && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0, 0, 0, 0.8)',
+              backdropFilter: 'blur(10px)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '24px'
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="glass-panel"
+              style={{
+                maxWidth: '500px',
+                width: '100%',
+                padding: '40px',
+                position: 'relative',
+                background: 'linear-gradient(180deg, rgba(30, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.9) 100%)',
+                border: '1px solid rgba(255, 69, 58, 0.3)',
+                boxShadow: '0 24px 64px rgba(255, 69, 58, 0.15)'
+              }}
+            >
+              <button 
+                onClick={() => setShowRoast(false)}
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--color-text-muted)',
+                  cursor: 'pointer'
+                }}
+              >
+                <X size={24} />
+              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+                <div style={{ background: 'rgba(255,69,58,0.2)', padding: '12px', borderRadius: '50%' }}>
+                  <Flame size={24} color="#ff453a" />
+                </div>
+                <h2 style={{ fontSize: '24px', letterSpacing: '-0.02em', color: '#fff' }}>Vibe Check Failed.</h2>
+              </div>
+
+              <p style={{ color: 'var(--color-text-secondary)', fontSize: '16px', lineHeight: 1.6, fontStyle: 'italic' }}>
+                "Oh wow, another 'Synthwave' phase. Do you actually listen to the music, or do you just leave it on so you can pretend you're driving a DeLorean through a neon grid? Because your top tracks scream 'I bought a mechanical keyboard and now I make it my whole personality.' 💀"
+              </p>
+              
+              <div style={{ marginTop: '32px', textAlign: 'center' }}>
+                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                  Generated by VibeIfy AI
+                </span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Shareable Receipt Modal */}
+      <AnimatePresence>
+        {showReceipt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0, 0, 0, 0.8)',
+              backdropFilter: 'blur(10px)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '24px'
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              style={{
+                maxWidth: '350px',
+                width: '100%',
+                background: '#f4f4f4',
+                color: '#111',
+                padding: '32px 24px',
+                fontFamily: '"Courier New", Courier, monospace',
+                position: 'relative',
+                boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+                clipPath: 'polygon(0 0, 100% 0, 100% 100%, 95% 98%, 90% 100%, 85% 98%, 80% 100%, 75% 98%, 70% 100%, 65% 98%, 60% 100%, 55% 98%, 50% 100%, 45% 98%, 40% 100%, 35% 98%, 30% 100%, 25% 98%, 20% 100%, 15% 98%, 10% 100%, 5% 98%, 0 100%)'
+              }}
+            >
+              <button 
+                onClick={() => setShowReceipt(false)}
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#999',
+                  cursor: 'pointer'
+                }}
+              >
+                <X size={24} />
+              </button>
+
+              <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '24px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>VIBEIFY RECEIPT</h2>
+                <p style={{ fontSize: '12px', borderBottom: '1px dashed #ccc', paddingBottom: '16px' }}>ORDER #0001 FOR ALEX DOE</p>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', fontSize: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, borderBottom: '1px dashed #ccc', paddingBottom: '8px' }}>
+                  <span>QTY ITEM</span>
+                  <span>AMT</span>
+                </div>
+                {topTracks.map((track, index) => (
+                  <div key={track.id} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {String(index + 1).padStart(2, '0')} {track.title.toUpperCase()}
+                    </span>
+                    <span>{track.duration}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ borderTop: '1px dashed #ccc', paddingTop: '16px', textAlign: 'center', fontSize: '12px' }}>
+                <p style={{ marginBottom: '8px' }}>ITEM COUNT: {topTracks.length}</p>
+                <p>TOTAL VIBES: 100%</p>
+                <div style={{ marginTop: '24px' }}>
+                  <p>THANK YOU FOR LISTENING!</p>
+                  <p>vibeify.app</p>
+                </div>
+                
+                {/* Barcode Mock */}
+                <div style={{ marginTop: '16px', fontSize: '32px', letterSpacing: '-2px', fontFamily: 'monospace', opacity: 0.8 }}>
+                  |||| ||| || ||||| | |||
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
