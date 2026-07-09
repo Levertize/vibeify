@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ThemeToggle from './components/ThemeToggle';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -13,10 +14,15 @@ function App() {
         {/* Theme Toggle Button */}
         <ThemeToggle />
 
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
+        <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </div>
+        
+        {/* Footer with Glowing GitHub Link */}
+        <Footer />
       </div>
     </BrowserRouter>
   );
