@@ -1,7 +1,7 @@
 // Utility functions for Spotify PKCE Auth Flow
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-const REDIRECT_URI = 'http://localhost:5173/callback';
+const REDIRECT_URI = 'http://127.0.0.1:5173/callback';
 const AUTH_URL = 'https://accounts.spotify.com/authorize';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 
@@ -108,4 +108,29 @@ export function logout() {
   window.localStorage.removeItem('spotify_access_token');
   window.localStorage.removeItem('spotify_refresh_token');
   window.location.href = '/';
+}
+
+export async function getUserProfile() {
+  const token = getAccessToken();
+  if (!token) throw new Error('No access token');
+
+  const response = await fetch('https://api.spotify.com/v1/me', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  if (!response.ok) {
+    let errMsg = `HTTP ${response.status}`;
+    try {
+      const errBody = await response.json();
+      errMsg = errBody.error?.message || JSON.stringify(errBody);
+    } catch(e) {}
+
+    if (response.status === 401) {
+      logout();
+      return;
+    }
+    throw new Error(errMsg);
+  }
+
+  return response.json();
 }
