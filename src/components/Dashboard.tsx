@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, User, Music, Sparkles, Mic2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import TopStats from './TopStats';
 import VibeGenerator from './VibeGenerator';
-import { getUserProfile, logout } from '../lib/spotify';
 
 const mockLyrics = [
   "Waiting in a car",
@@ -30,16 +29,6 @@ export default function Dashboard() {
   const [activeLine, setActiveLine] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
-  const [profile, setProfile] = useState<any>(null);
-  const [profileError, setProfileError] = useState<string | null>(null);
-
-  useEffect(() => {
-    getUserProfile()
-      .then(data => setProfile(data))
-      .catch((err) => {
-        setProfileError(err.message);
-      });
-  }, []);
 
   useEffect(() => {
     if (!showLyrics) return;
@@ -86,50 +75,24 @@ export default function Dashboard() {
           padding: '24px',
           display: 'flex',
           alignItems: 'center',
-          gap: '20px'
+          gap: '24px'
         }}>
           <div style={{
-            width: '64px',
-            height: '64px',
+            width: '96px',
+            height: '96px',
             borderRadius: '50%',
             background: 'var(--color-border-subtle)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            overflow: 'hidden'
+            justifyContent: 'center'
           }}>
-            {profile?.images?.[0]?.url ? (
-              <img src={profile.images[0].url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              <User size={24} color="var(--color-text-muted)" />
-            )}
+            <User size={40} color="var(--color-text-muted)" />
           </div>
           <div>
-            {profileError ? (
-              <div>
-                <h2 style={{ fontSize: '16px', color: 'var(--color-status-error)' }}>API Error: {profileError}</h2>
-                <button onClick={logout} style={{ color: 'var(--color-text-secondary)', fontSize: '14px', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
-                  Sign out & Try Again
-                </button>
-              </div>
-            ) : (
-              <>
-                <h2 style={{ fontSize: '20px', fontWeight: 600 }}>{profile ? profile.display_name : 'Loading...'}</h2>
-                <button 
-                  onClick={logout} 
-                  style={{ 
-                    color: 'var(--color-text-secondary)', 
-                    fontSize: '14px', 
-                    background: 'transparent', 
-                    border: 'none', 
-                    cursor: 'pointer', 
-                    padding: 0,
-                    textDecoration: 'underline'
-                  }}>
-                  Sign out
-                </button>
-              </>
-            )}
+            <h2 style={{ fontSize: '32px', letterSpacing: '-0.02em', marginBottom: '4px' }}>Alex Doe</h2>
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: '14px' }}>
+              <span style={{ color: 'var(--color-accent-primary)', fontWeight: 500 }}>PREMIUM</span> • 1.2K Followers
+            </p>
           </div>
         </div>
 
